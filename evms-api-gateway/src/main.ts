@@ -5,6 +5,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalExceptionsFilter } from './core';
@@ -23,6 +24,15 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new GlobalExceptionsFilter(httpAdapter));
 
+  // Open API
+  const config = new DocumentBuilder()
+    .setTitle('EVMS API Gateway')
+    .setDescription('The API Docs for Whole EVMS Services')
+    .setVersion('1.0')
+    .addTag('EVMS')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
   // Security: Helmet
   app.use(helmet());
   await app.listen(new ConfigService().get('port'), '0.0.0.0');

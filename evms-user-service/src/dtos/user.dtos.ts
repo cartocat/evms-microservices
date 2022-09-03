@@ -26,9 +26,6 @@ export class UpdateUserDTO {
 
   @IsNotEmpty()
   password: string;
-
-  @IsNotEmpty()
-  isActive: boolean;
 }
 
 export class VerifyUserDTO {

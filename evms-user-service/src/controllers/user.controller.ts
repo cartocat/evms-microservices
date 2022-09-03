@@ -1,4 +1,5 @@
-import { Controller } from '@nestjs/common';
+import { UpdateResult } from 'typeorm';
+import { Controller, Logger } from '@nestjs/common';
 import { UserService } from '../services';
 import {
   CreateUserDTO,
@@ -18,6 +19,7 @@ export class UserController {
 
   @MessagePattern({ role: 'user', cmd: 'create' })
   createUser(data: CreateUserDTO): Promise<User> {
+    Logger.log('Called');
     return this.userService.create(data);
   }
 
@@ -27,11 +29,12 @@ export class UserController {
   }
 
   @MessagePattern({ role: 'user', cmd: 'updateUser' })
-  updateUser(data: UpdateUserDTO): Promise<User> {
+  updateUser(data: UpdateUserDTO): Promise<UpdateResult> {
     return this.userService.findOneByIdAndUpdate(data);
   }
   @MessagePattern({ role: 'user', cmd: 'verifyUser' })
   verifyUser(data: VerifyUserDTO): Promise<boolean> {
+    Logger.log('Verify Called');
     return this.userService.verify(data);
   }
 

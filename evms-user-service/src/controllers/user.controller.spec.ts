@@ -10,6 +10,7 @@ import {
   VerifyUserDTO,
 } from '../dtos';
 import { repositoryMockFactory } from '../utils';
+import { UpdateResult } from 'typeorm';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
@@ -59,7 +60,7 @@ describe('User Module Unit Test', () => {
 
   describe('update user', () => {
     it('should return updated user', async () => {
-      const result = new User();
+      const result = new UpdateResult();
       jest
         .spyOn(userService, 'findOneByIdAndUpdate')
         .mockImplementation(async () => result);

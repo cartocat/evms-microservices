@@ -1,9 +1,6 @@
 export default () => ({
   port: process.env.PORT,
-  auth: {
-    secret: process.env.SECRET,
-    expireIn: process.env.EXPIREIN,
-  },
+  microserviceHost: process.env.MICROSERVICE_TCP_HOST,
   database: {
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT, 10) || 3306,

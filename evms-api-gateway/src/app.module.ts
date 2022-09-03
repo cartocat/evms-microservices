@@ -1,25 +1,37 @@
+import { JwtStrategy } from './core/jwt.strategy';
+import { JwtModule } from '@nestjs/jwt';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ClientProxyFactory } from '@nestjs/microservices';
+import {
+  AppController,
+  UserGatewayController,
+  AuthController,
+} from './controllers/';
+import { AppService, AuthService } from './services/';
 import { configuration } from './config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
-    ClientsModule.register([
-      {
-        name: 'USER_CLIENT',
-        transport: Transport.TCP,
-        options: {
-          host: new ConfigService().get('microserviceTCPHost'),
-          port: new ConfigService().get('userServicePort'),
-        },
-      },
-    ]),
+    JwtModule.register({
+      secret: new ConfigService().get('secret'),
+      signOptions: { expiresIn: '1d' },
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UserGatewayController, AuthController],
+  providers: [
+    {
+      provide: 'USER_SERVICE',
+      useFactory: (configService: ConfigService) => {
+        const userServiceOptions = configService.get('userService');
+        return ClientProxyFactory.create(userServiceOptions);
+      },
+      inject: [ConfigService],
+    },
+    AppService,
+    AuthService,
+    JwtStrategy,
+  ],
 })
 export class AppModule {}

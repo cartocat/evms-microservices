@@ -11,7 +11,7 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: process.env.MICROSERVICE_TCP_HOST,
+        host: new ConfigService().get('host'),
         port: new ConfigService().get('port'),
       },
     },
